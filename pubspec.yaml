@@ -1,7 +1,7 @@
 name: flip_card_swiper
 description: A customizable cards swiper widget for Flutter.
 version: 0.0.1
-homepage:
+homepage: https://github.com/LiquidatorCoder/flip_card_swiper
 
 environment:
   sdk: ">=3.1.2 <4.0.0"

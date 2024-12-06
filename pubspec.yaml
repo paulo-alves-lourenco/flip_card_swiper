@@ -2,7 +2,7 @@ name: flip_card_swiper
 description: A customizable, swipeable card widget with smooth flip animations and haptic support.
 version: 0.0.1+1
 repository: https://github.com/LiquidatorCoder/flip_card_swiper
-topics: [3d, card, swipe, transform, flip]
+topics: [animation, card, swipe, transform, flip]
 
 environment:
   sdk: ">=3.1.2 <4.0.0"

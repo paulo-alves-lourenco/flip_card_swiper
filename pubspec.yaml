@@ -1,5 +1,5 @@
 name: flip_card_swiper
-description: A customizable cards swiper widget for Flutter.
+description: A customizable, swipeable card widget with smooth flip animations and haptic support.
 version: 0.0.1
 homepage: https://github.com/LiquidatorCoder/flip_card_swiper
 

@@ -154,14 +154,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-## Credits
-
-This package uses the following open-source packages:
-
-- [Loggy](https://pub.dev/packages/loggy)
-- [Shared Preferences](https://pub.dev/packages/shared_preferences)
-- [Device Info Plus](https://pub.dev/packages/device_info_plus)
-
 ## Bugs or Requests
 
 - For bugs, please [open an issue](https://github.com/LiquidatorCoder/flip_card_swiper/issues/new?template=bug_report.md).

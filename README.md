@@ -1,39 +1,169 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+<h1 align="center">Flip Card Swiper</h1>
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
+<p align="center">
+  <b>A customizable, swipeable card widget with smooth flip animations and haptic support.</b>
+</p><br>
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
+<p align="center">
+  <a href="https://flutter.dev">
+    <img src="https://img.shields.io/badge/Platform-Flutter-02569B?logo=flutter" alt="Platform" />
+  </a>
+  <a href="https://pub.dartlang.org/packages/flip_card_swiper">
+    <img src="https://img.shields.io/pub/v/flip_card_swiper.svg" alt="Pub Package" />
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/github/license/LiquidatorCoder/flip_card_swiper?color=red" alt="License: MIT" />
+  </a>
+  <a href="https://www.paypal.me/codenameakshay">
+    <img src="https://img.shields.io/badge/Donate-PayPal-00457C?logo=paypal" alt="Donate" />
+  </a>
+</p><br>
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+<p align="center">
+  <a href="#features">Features</a> •
+  <a href="#installation">Installation</a> •
+  <a href="#usage">Usage</a> •
+  <a href="#license">License</a> •
+  <a href="#bugs-or-requests">Bugs or Requests</a>
+</p><br>
+
+---
+
+| ![Colored Card Demo](https://raw.githubusercontent.com/LiquidatorCoder/flip_card_swiper/main/screenshots/colored.gif) | ![White Card Demo](https://raw.githubusercontent.com/LiquidatorCoder/flip_card_swiper/main/screenshots/white.gif) |
+| --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **Flip Animation with Colored Cards**                                                                                 | **Flip Animation with White Cards**                                                                               |
+
+---
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- **Flip & Swipe Animations:**  
+  Easily flip between cards with a vertical drag gesture. Cards smoothly animate through the stack.
 
-## Getting started
+- **Card Collection Animations:**  
+  Automatically animate cards into a collection, perfect for onboarding sequences or showcases.
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+- **Haptic Feedback:**  
+  Provide tactile feedback to users as they flip through cards, enhancing user experience.
+
+- **Dynamic Card Updates:**  
+  The widget updates card order at mid-animation, allowing endless looping through your card collection.
+
+- **Customizable Scaling & Offsets:**  
+  Fine-tune card positions, scales, and transitions to achieve unique flipping and stacking effects.
+
+**No extra dependencies or complicated setup—just integrate and start flipping!**
+
+---
+
+## Installation
+
+Add the following line to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  flip_card_swiper: ^1.0.0
+```
+
+Then, run:
+
+```bash
+flutter pub get
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
 ```dart
-const like = 'sample';
+import 'package:flutter/material.dart';
+import 'package:flip_card_swiper/flip_card_swiper.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  final List<Map<String, dynamic>> cards = [
+    {'color': Colors.blue, 'text': 'Card 1'},
+    {'color': Colors.red, 'text': 'Card 2'},
+    {'color': Colors.green, 'text': 'Card 3'},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: FlipCardSwiper(
+            cardData: cards,
+            onCardChange: (newIndex) {
+              // Do something when the top card changes
+            },
+            onCardCollectionAnimationComplete: (value) {
+              // Triggered when card collection animation finishes
+            },
+            // Build each card widget
+            cardBuilder: (context, index, visibleIndex) {
+              final card = cards[index];
+              return Container(
+                width: 300,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: card['color'],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  card['text'],
+                  style: const TextStyle(fontSize: 24, color: Colors.white),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
 ```
 
-## Additional information
+## License
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+```
+MIT License
+
+Copyright (c) 2024 Abhay Maurya
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+## Credits
+
+This package uses the following open-source packages:
+
+- [Loggy](https://pub.dev/packages/loggy)
+- [Shared Preferences](https://pub.dev/packages/shared_preferences)
+- [Device Info Plus](https://pub.dev/packages/device_info_plus)
+
+## Bugs or Requests
+
+- For bugs, please [open an issue](https://github.com/LiquidatorCoder/flip_card_swiper/issues/new?template=bug_report.md).
+- For features or enhancements, submit a [feature request](https://github.com/LiquidatorCoder/flip_card_swiper/issues/new?template=feature_request.md).
+- PRs are welcome—contributions help make this tool better!

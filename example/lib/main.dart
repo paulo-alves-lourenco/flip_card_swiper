@@ -13,16 +13,16 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool _shouldPlayAnimation = false;
   final List<Map<String, dynamic>> cards = [
-    {'color': Colors.white, 'text': 'Card 1'},
-    {'color': Colors.white, 'text': 'Card 2'},
-    {'color': Colors.white, 'text': 'Card 3'},
-    {'color': Colors.white, 'text': 'Card 4'},
-    {'color': Colors.white, 'text': 'Card 5'},
-    {'color': Colors.white, 'text': 'Card 6'},
-    {'color': Colors.white, 'text': 'Card 7'},
-    {'color': Colors.white, 'text': 'Card 8'},
-    {'color': Colors.white, 'text': 'Card 9'},
-    {'color': Colors.white, 'text': 'Card 10'},
+    {'color': Colors.blue, 'text': 'Card 1'},
+    {'color': Colors.red, 'text': 'Card 2'},
+    {'color': Colors.green, 'text': 'Card 3'},
+    {'color': Colors.purple, 'text': 'Card 4'},
+    {'color': Colors.orange, 'text': 'Card 5'},
+    {'color': Colors.teal, 'text': 'Card 6'},
+    {'color': Colors.pink, 'text': 'Card 7'},
+    {'color': Colors.amber, 'text': 'Card 8'},
+    {'color': Colors.indigo, 'text': 'Card 9'},
+    {'color': Colors.brown, 'text': 'Card 10'},
   ];
 
   @override
@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
               }
               final card = cards[index];
               return AnimatedSwitcher(
-                duration: const Duration(milliseconds: 0),
+                duration: const Duration(milliseconds: 300),
                 transitionBuilder: (Widget child, Animation<double> animation) {
                   final bool isIncoming = child.key == ValueKey<int>(visibleIndex);
 
@@ -87,7 +87,7 @@ class _MyAppState extends State<MyApp> {
                   alignment: Alignment.center,
                   child: Text(
                     card['text'] as String,
-                    style: const TextStyle(color: Colors.black12, fontSize: 12),
+                    style: const TextStyle(color: Colors.black45, fontSize: 12),
                   ),
                 ),
               );

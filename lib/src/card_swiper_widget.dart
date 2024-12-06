@@ -35,7 +35,8 @@ class FlipCardSwiper<T> extends StatefulWidget {
   /// - `context`: The build context.
   /// - `index`: The index of the card in the data.
   /// - `visibleIndex`: The index of the card in the visible stack (0 = top).
-  final Widget Function(BuildContext context, int index, int visibleIndex) cardBuilder;
+  final Widget Function(BuildContext context, int index, int visibleIndex)
+      cardBuilder;
 
   /// Whether the card collection animation should start automatically.
   final bool shouldStartCardCollectionAnimation;
@@ -93,7 +94,8 @@ class FlipCardSwiper<T> extends StatefulWidget {
   State<FlipCardSwiper<T>> createState() => _FlipCardSwiperState<T>();
 }
 
-class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProviderStateMixin {
+class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>>
+    with TickerProviderStateMixin {
   AnimationController? _controller;
   Animation<double>? _yOffsetAnimation;
   Animation<double>? _rotationAnimation;
@@ -209,7 +211,8 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
           // Move the top card to the back of the stack.
           var firstCard = _cardData.removeAt(0);
           _poppedCardIndex = widget.cardData.indexOf(firstCard);
-          _poppedCardWidget = widget.cardBuilder(context, _poppedCardIndex ?? 0, -1);
+          _poppedCardWidget =
+              widget.cardBuilder(context, _poppedCardIndex ?? 0, -1);
           _cardData.add(firstCard);
           onCardSwitchVibration();
 
@@ -248,11 +251,14 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
         begin: 0.0,
         end: 1.0,
       ).animate(CurvedAnimation(
-        parent: _cardCollectionAnimationController ?? AnimationController(vsync: this),
+        parent: _cardCollectionAnimationController ??
+            AnimationController(vsync: this),
         curve: Curves.easeOutCubic,
       ));
 
-      _cardCollectionAnimationController?.forward().then((_) => widget.onCardCollectionAnimationComplete(false));
+      _cardCollectionAnimationController
+          ?.forward()
+          .then((_) => widget.onCardCollectionAnimationComplete(false));
     }
 
     _updateCardWidgets();
@@ -306,7 +312,8 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
       _updateCardWidgets();
     }
 
-    if (widget.shouldStartCardCollectionAnimation != oldWidget.shouldStartCardCollectionAnimation) {
+    if (widget.shouldStartCardCollectionAnimation !=
+        oldWidget.shouldStartCardCollectionAnimation) {
       if (widget.shouldStartCardCollectionAnimation) {
         _cardCollectionAnimationController = AnimationController(
           duration: const Duration(milliseconds: 1000),
@@ -317,11 +324,14 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
           begin: 0.0,
           end: 1.0,
         ).animate(CurvedAnimation(
-          parent: _cardCollectionAnimationController ?? AnimationController(vsync: this),
+          parent: _cardCollectionAnimationController ??
+              AnimationController(vsync: this),
           curve: Curves.easeOutCubic,
         ));
 
-        _cardCollectionAnimationController?.forward().then((_) => widget.onCardCollectionAnimationComplete(false));
+        _cardCollectionAnimationController
+            ?.forward()
+            .then((_) => widget.onCardCollectionAnimationComplete(false));
       } else {
         _cardCollectionAnimationController?.dispose();
         _cardCollectionAnimationController = null;
@@ -372,7 +382,8 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
       return;
     }
 
-    double dragDistance = _dragStartPosition - details.globalPosition.dy; // Positive when dragging up
+    double dragDistance = _dragStartPosition -
+        details.globalPosition.dy; // Positive when dragging up
 
     if (dragDistance >= 0) {
       // Dragging up
@@ -387,9 +398,12 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
         _hasReachedHalf = true;
         // Automatically animate to 1.0
         final double remaining = 1.0 - (_controller?.value ?? 0.0);
-        final int duration = ((_controller?.duration?.inMilliseconds ?? 0) * remaining).round();
+        final int duration =
+            ((_controller?.duration?.inMilliseconds ?? 0) * remaining).round();
         if (duration > 0) {
-          _controller?.animateTo(1.0, duration: Duration(milliseconds: duration), curve: Curves.easeOut);
+          _controller?.animateTo(1.0,
+              duration: Duration(milliseconds: duration),
+              curve: Curves.easeOut);
           _isAnimationBlocked = true;
         } else {
           if (_controller != null) {
@@ -400,9 +414,11 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
     } else {
       // Dragging down
       if (_controller != null) {
-        _controller?.value = _startAnimationValue; // Keep animation controller at current value
+        _controller?.value =
+            _startAnimationValue; // Keep animation controller at current value
       }
-      double downDragOffset = dragDistance.clamp(widget.dragDownLimit, 0.0); // Limit to dragDownLimit pixels
+      double downDragOffset = dragDistance.clamp(
+          widget.dragDownLimit, 0.0); // Limit to dragDownLimit pixels
       _dragOffset = -downDragOffset;
       if (downDragOffset == widget.dragDownLimit) {
         if (_shouldPlayVibration) {
@@ -437,9 +453,12 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
       if ((_controller?.value ?? 0.0) >= widget.thresholdValue) {
         // Continue the animation to the end with adjusted duration
         final double remaining = 1.0 - (_controller?.value ?? 0.0);
-        final int duration = ((_controller?.duration?.inMilliseconds ?? 0) * remaining).round();
+        final int duration =
+            ((_controller?.duration?.inMilliseconds ?? 0) * remaining).round();
         if (duration > 0) {
-          _controller?.animateTo(1.0, duration: Duration(milliseconds: duration), curve: Curves.easeOut);
+          _controller?.animateTo(1.0,
+              duration: Duration(milliseconds: duration),
+              curve: Curves.easeOut);
           _isAnimationBlocked = true;
         } else {
           if (_controller != null) {
@@ -448,9 +467,13 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
         }
       } else {
         // Animate back to the start with adjusted duration
-        final int duration = ((_controller?.duration?.inMilliseconds ?? 0) * (_controller?.value ?? 0.0)).round();
+        final int duration = ((_controller?.duration?.inMilliseconds ?? 0) *
+                (_controller?.value ?? 0.0))
+            .round();
         if (duration > 0) {
-          _controller?.animateBack(0.0, duration: Duration(milliseconds: duration), curve: Curves.easeOut);
+          _controller?.animateBack(0.0,
+              duration: Duration(milliseconds: duration),
+              curve: Curves.easeOut);
         } else {
           if (_controller != null) {
             _controller?.value = 0.0;
@@ -466,11 +489,15 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
     double yOffsetAnimationValue = _yOffsetAnimation?.value ?? 0.0;
     double rotation = _rotationAnimation?.value ?? 0.0;
     double totalYOffset = -yOffsetAnimationValue * widget.maxDragDistance +
-        (_downDragController?.isAnimating == true ? _downDragAnimation?.value ?? 0.0 : _dragOffset);
+        (_downDragController?.isAnimating == true
+            ? _downDragAnimation?.value ?? 0.0
+            : _dragOffset);
 
     if ((_controller?.value ?? 0.0) >= 0.5) {
       // Adjust for the second card if only two cards are present
-      totalYOffset += _cardData.length == 2 ? widget.secondCardOffsetStart : widget.thirdCardOffsetStart;
+      totalYOffset += _cardData.length == 2
+          ? widget.secondCardOffsetStart
+          : widget.thirdCardOffsetStart;
     }
 
     List<Widget> stackChildren = [];
@@ -517,7 +544,8 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
             _controller ?? AnimationController(vsync: this),
             _downDragController ?? AnimationController(vsync: this),
             if (widget.shouldStartCardCollectionAnimation)
-              _cardCollectionAnimationController ?? AnimationController(vsync: this),
+              _cardCollectionAnimationController ??
+                  AnimationController(vsync: this),
           ]),
           builder: (context, child) {
             return Stack(
@@ -576,8 +604,12 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
           alignment: Alignment.center,
           transform: Matrix4.identity()
             ..translate(0.0, yOffset)
-            ..translate(0.0,
-                _isCardSwitched ? (-widget.thirdCardOffsetStart) * (((_rotationAnimation?.value ?? 0) + 180) / 90) : 0)
+            ..translate(
+                0.0,
+                _isCardSwitched
+                    ? (-widget.thirdCardOffsetStart) *
+                        (((_rotationAnimation?.value ?? 0) + 180) / 90)
+                    : 0)
             ..setEntry(3, 2, 0.001)
             ..rotateX(rotation * pi / 180)
             ..scale(scale, scale),
@@ -675,9 +707,13 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
 
           // Adjust yOffset
           if (_cardData.length == 2) {
-            yOffset = initialOffset - widget.secondCardOffsetStart + widget.secondCardOffsetEnd * progress;
+            yOffset = initialOffset -
+                widget.secondCardOffsetStart +
+                widget.secondCardOffsetEnd * progress;
           } else {
-            yOffset = initialOffset - widget.thirdCardOffsetStart + widget.thirdCardOffsetEnd * progress;
+            yOffset = initialOffset -
+                widget.thirdCardOffsetStart +
+                widget.thirdCardOffsetEnd * progress;
           }
           progress = Curves.easeOut.transform(progress);
 
@@ -690,9 +726,11 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
           transform: Matrix4.identity()
             ..translate(
                 0.0,
-                widget.shouldStartCardCollectionAnimation && _cardCollectionyOffsetAnimation != null
+                widget.shouldStartCardCollectionAnimation &&
+                        _cardCollectionyOffsetAnimation != null
                     ? _cardCollectionyOffsetAnimation
-                            ?.drive(CurveTween(curve: Interval((0.4 * (index - 1)), 0.9)))
+                            ?.drive(CurveTween(
+                                curve: Interval((0.4 * (index - 1)), 0.9)))
                             .drive(CurveTween(curve: Curves.easeOut))
                             .drive(Tween(begin: yOffset, end: yOffset + 20))
                             .value ??

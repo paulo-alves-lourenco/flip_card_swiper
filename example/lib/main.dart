@@ -59,7 +59,8 @@ class _MyAppState extends State<MyApp> {
               return AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 transitionBuilder: (Widget child, Animation<double> animation) {
-                  final bool isIncoming = child.key == ValueKey<int>(visibleIndex);
+                  final bool isIncoming =
+                      child.key == ValueKey<int>(visibleIndex);
 
                   if (isIncoming) {
                     return FadeTransition(

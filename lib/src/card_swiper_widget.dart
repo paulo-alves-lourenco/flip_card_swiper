@@ -3,35 +3,65 @@ import 'package:flutter/services.dart';
 import 'dart:math';
 import 'dart:async';
 
+/// A customizable swipeable card widget with animations and gesture support.
+/// Allows cards to be swiped with vertical drag gestures, providing haptic feedback
+/// and smooth animations for card transitions.
 class FlipCardSwiper<T> extends StatefulWidget {
+  /// The list of data used to build the cards.
   final List<T> cardData;
+
+  /// The duration of the card swipe animation.
   final Duration animationDuration;
+
+  /// The duration of the downward drag animation.
   final Duration downDragDuration;
+
+  /// The duration of the card collection animation.
   final Duration collectionDuration;
+
+  /// The maximum distance for a drag gesture to trigger animations.
   final double maxDragDistance;
+
+  /// The limit for dragging down before animation blocks further motion.
   final double dragDownLimit;
+
+  /// The threshold value for determining whether to complete the swipe animation.
   final double thresholdValue;
+
+  /// A callback triggered when the top card changes.
   final void Function(int)? onCardChange;
+
+  /// A builder function to create each card widget.
+  /// - `context`: The build context.
+  /// - `index`: The index of the card in the data.
+  /// - `visibleIndex`: The index of the card in the visible stack (0 = top).
   final Widget Function(BuildContext context, int index, int visibleIndex) cardBuilder;
+
+  /// Whether the card collection animation should start automatically.
   final bool shouldStartCardCollectionAnimation;
+
+  /// A callback triggered when the card collection animation is complete.
   final void Function(bool value) onCardCollectionAnimationComplete;
 
-  // Offset and scale parameters
+  // Offset and scale parameters for the top card.
   final double topCardOffsetStart;
   final double topCardOffsetEnd;
   final double topCardScaleStart;
   final double topCardScaleEnd;
 
+  // Offset and scale parameters for the second card.
   final double secondCardOffsetStart;
   final double secondCardOffsetEnd;
   final double secondCardScaleStart;
   final double secondCardScaleEnd;
 
+  // Offset and scale parameters for the third card.
   final double thirdCardOffsetStart;
   final double thirdCardOffsetEnd;
   final double thirdCardScaleStart;
   final double thirdCardScaleEnd;
 
+  /// Creates a FlipCardSwiper widget.
   const FlipCardSwiper({
     required this.cardData,
     required this.cardBuilder,
@@ -42,7 +72,6 @@ class FlipCardSwiper<T> extends StatefulWidget {
     this.dragDownLimit = -40.0,
     this.thresholdValue = 0.3,
     this.onCardChange,
-    // Default offset and scale values
     this.topCardOffsetStart = 0.0,
     this.topCardOffsetEnd = -15.0,
     this.topCardScaleStart = 1.0,
@@ -98,6 +127,7 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
   Widget? _poppedCardWidget;
   int? _poppedCardIndex;
 
+  /// Triggers haptic feedback when a card is successfully switched.
   Future<void> onCardSwitchVibration() async {
     HapticFeedback.lightImpact();
     Future.delayed(const Duration(milliseconds: 250), () {
@@ -105,6 +135,7 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
     });
   }
 
+  /// Triggers haptic feedback when dragging down is blocked.
   Future<void> onCardBlockVibration() async {
     HapticFeedback.lightImpact();
     Future.delayed(const Duration(milliseconds: 100), () {
@@ -119,22 +150,22 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
   void initState() {
     super.initState();
 
-    // Copy the card data to allow modifications
+    // Copy the card data to allow modifications.
     _cardData = List.from(widget.cardData);
 
-    // Initialize the AnimationController
+    // Initialize the animation controller for swipe animation.
     _controller = AnimationController(
       duration: widget.animationDuration,
       vsync: this,
     );
 
-    // Create a CurvedAnimation
+    // Create a curved animation for the swipe.
     _animation = CurvedAnimation(
       parent: _controller ?? AnimationController(vsync: this),
       curve: Curves.easeInOut,
     );
 
-    // Define the yOffset animation using TweenSequence
+    // Define the yOffset animation using TweenSequence.
     _yOffsetAnimation = TweenSequence<double>([
       TweenSequenceItem<double>(
         tween: Tween<double>(begin: 0.0, end: 0.5),
@@ -146,13 +177,13 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
       ),
     ]).animate(_animation ?? const AlwaysStoppedAnimation(0.0));
 
-    // Define the rotation animation from 0 to -180 degrees
+    // Define the rotation animation from 0 to -180 degrees.
     _rotationAnimation = Tween<double>(
       begin: 0.0,
       end: -180.0,
     ).animate(_animation ?? const AlwaysStoppedAnimation(0.0));
 
-    // Initialize the down drag controller
+    // Initialize the downward drag controller.
     _downDragController = AnimationController(
       duration: widget.downDragDuration,
       vsync: this,
@@ -166,18 +197,16 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
         _dragOffset = _downDragAnimation?.value ?? 0.0;
       });
 
-    // Listen to the animation value to switch cards at 0.5
+    // Listen to the animation value to switch cards at the midpoint (0.5).
     _controller?.addListener(() {
-      // Only perform switch if there are multiple cards
       if (_cardData.length > 1) {
-        // Switch cards at midpoint (0.5) of the animation
         if (!_isCardSwitched && (_controller?.value ?? 0.0) >= 0.5) {
           if (_debounceTimer?.isActive ?? false) {
             _isCardSwitched = true;
             return;
           }
 
-          // Move the top card to the back
+          // Move the top card to the back of the stack.
           var firstCard = _cardData.removeAt(0);
           _poppedCardIndex = widget.cardData.indexOf(firstCard);
           _poppedCardWidget = widget.cardBuilder(context, _poppedCardIndex ?? 0, -1);
@@ -188,7 +217,7 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
 
           _updateCardWidgets();
 
-          // Trigger the callback with the new top card index
+          // Trigger the callback with the new top card index.
           if (widget.onCardChange != null) {
             widget.onCardChange?.call(widget.cardData.indexOf(_cardData[0]));
           }
@@ -196,18 +225,19 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
           _debounceTimer = Timer(const Duration(milliseconds: 300), () {});
         }
 
-        // Reset the switch flag when animation resets
+        // Reset the switch flag when the animation resets.
         if ((_controller?.value ?? 0.0) == 1.0) {
           _isCardSwitched = false;
           _controller?.reset();
           _hasReachedHalf = false;
         }
       } else {
-        // If only one card, reset the animation
+        // Reset the animation if there is only one card.
         _controller?.reset();
       }
     });
 
+    // Start the card collection animation if enabled.
     if (widget.shouldStartCardCollectionAnimation) {
       _cardCollectionAnimationController = AnimationController(
         duration: widget.collectionDuration,
@@ -228,8 +258,8 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
     _updateCardWidgets();
   }
 
+  /// Updates the widgets for the top three visible cards.
   void _updateCardWidgets() {
-    // Update top card
     if (_cardData.isNotEmpty) {
       _topCardIndex = widget.cardData.indexOf(_cardData[0]);
       _topCardWidget = widget.cardBuilder(context, _topCardIndex ?? 0, 0);
@@ -238,7 +268,6 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
       _topCardWidget = null;
     }
 
-    // Update second card
     if (_cardData.length > 1) {
       _secondCardIndex = widget.cardData.indexOf(_cardData[1]);
       _secondCardWidget = widget.cardBuilder(context, _secondCardIndex ?? 0, 1);
@@ -247,7 +276,6 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
       _secondCardWidget = null;
     }
 
-    // Update third card
     if (_cardData.length > 2) {
       _thirdCardIndex = widget.cardData.indexOf(_cardData[2]);
       _thirdCardWidget = widget.cardBuilder(context, _thirdCardIndex ?? 0, 2);
@@ -433,12 +461,54 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
     _shouldPlayVibration = true;
   }
 
+  List<Widget> _buildStackedCards() {
+// Calculate the total Y offset including drag offset
+    double yOffsetAnimationValue = _yOffsetAnimation?.value ?? 0.0;
+    double rotation = _rotationAnimation?.value ?? 0.0;
+    double totalYOffset = -yOffsetAnimationValue * widget.maxDragDistance +
+        (_downDragController?.isAnimating == true ? _downDragAnimation?.value ?? 0.0 : _dragOffset);
+
+    if ((_controller?.value ?? 0.0) >= 0.5) {
+      // Adjust for the second card if only two cards are present
+      totalYOffset += _cardData.length == 2 ? widget.secondCardOffsetStart : widget.thirdCardOffsetStart;
+    }
+
+    List<Widget> stackChildren = [];
+
+    if (_cardData.length == 1) {
+      // Only one card, so only build the top card
+      stackChildren.add(_topCardWidget ?? const SizedBox.shrink());
+    } else {
+      int cardCount = min(_cardData.length, 3);
+
+      if (_isCardSwitched) {
+        // After the switch, reverse the order of the stack
+        for (int i = 0; i < cardCount; i++) {
+          if (i == 0) {
+            stackChildren.add(buildTopCard(totalYOffset, rotation));
+          } else {
+            stackChildren.add(buildCard(cardCount - i));
+          }
+        }
+      } else {
+        // Before the switch, normal order
+        for (int i = cardCount - 1; i >= 0; i--) {
+          if (i == 0) {
+            stackChildren.add(buildTopCard(totalYOffset, rotation));
+          } else {
+            stackChildren.add(buildCard(i));
+          }
+        }
+      }
+    }
+    return stackChildren;
+  }
+
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
-        // Attach gesture detectors
         onVerticalDragStart: _onVerticalDragStart,
         onVerticalDragUpdate: _onVerticalDragUpdate,
         onVerticalDragEnd: _onVerticalDragEnd,
@@ -450,49 +520,9 @@ class _FlipCardSwiperState<T> extends State<FlipCardSwiper<T>> with TickerProvid
               _cardCollectionAnimationController ?? AnimationController(vsync: this),
           ]),
           builder: (context, child) {
-            // Calculate the total Y offset including drag offset
-            double yOffsetAnimationValue = _yOffsetAnimation?.value ?? 0.0;
-            double rotation = _rotationAnimation?.value ?? 0.0;
-            double totalYOffset = -yOffsetAnimationValue * widget.maxDragDistance +
-                (_downDragController?.isAnimating == true ? _downDragAnimation?.value ?? 0.0 : _dragOffset);
-
-            if ((_controller?.value ?? 0.0) >= 0.5) {
-              // Adjust for the second card if only two cards are present
-              totalYOffset += _cardData.length == 2 ? widget.secondCardOffsetStart : widget.thirdCardOffsetStart;
-            }
-
-            List<Widget> stackChildren = [];
-
-            if (_cardData.length == 1) {
-              // Only one card, so only build the top card
-              stackChildren.add(_topCardWidget ?? const SizedBox.shrink());
-            } else {
-              int cardCount = min(_cardData.length, 3);
-
-              if (_isCardSwitched) {
-                // After the switch, reverse the order of the stack
-                for (int i = 0; i < cardCount; i++) {
-                  if (i == 0) {
-                    stackChildren.add(buildTopCard(totalYOffset, rotation));
-                  } else {
-                    stackChildren.add(buildCard(cardCount - i));
-                  }
-                }
-              } else {
-                // Before the switch, normal order
-                for (int i = cardCount - 1; i >= 0; i--) {
-                  if (i == 0) {
-                    stackChildren.add(buildTopCard(totalYOffset, rotation));
-                  } else {
-                    stackChildren.add(buildCard(i));
-                  }
-                }
-              }
-            }
-
             return Stack(
               alignment: Alignment.center,
-              children: stackChildren,
+              children: _buildStackedCards(),
             );
           },
         ),

@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
             shouldStartCardCollectionAnimation: _shouldPlayAnimation,
             cardData: cards,
             animationDuration: const Duration(milliseconds: 600),
-            downDragDuration: const Duration(milliseconds: 200),
+            rightDragDuration: const Duration(milliseconds: 200),
             onCardChange: (index) {},
             cardBuilder: (context, index, visibleIndex) {
               if (index < 0 || index >= cards.length) {
